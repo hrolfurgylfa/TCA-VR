@@ -1,0 +1,7 @@
+# Ignore any development scripts that depend on my file structure
+*.ps1
+
+# Editors
+.vs/
+.vscode/
+.idea/
