@@ -129,7 +129,7 @@ public class HeadsetListener
     {
         Logger.LogWarning("I'm Running Stuff");
         var f = new BinaryFormatter();
-        var server = new NamedPipeServerStream("Demo", PipeDirection.In);
+        var server = new NamedPipeServerStream("tca_vr_headset_data", PipeDirection.In);
         {
             server.WaitForConnection();
             while (true)

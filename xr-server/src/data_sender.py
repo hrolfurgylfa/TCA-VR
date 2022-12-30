@@ -14,7 +14,7 @@ class DataSender:
 
     def __enter__(self) -> "DataSender":
         self._file_handle = win32file.CreateFile(
-            r"\\.\pipe\Demo",
+            r"\\.\pipe\tca_vr_headset_data",
             win32file.GENERIC_WRITE,
             0,
             None,
