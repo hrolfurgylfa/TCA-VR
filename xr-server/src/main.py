@@ -12,7 +12,7 @@ import mss
 from data_sender import DataSender
 from timer import Timer
 
-UP = np.array([1, 0, 0])
+UP = np.array([1, 0, 0], dtype="float32")
 
 
 def normalized(vector: np.ndarray) -> np.ndarray:
@@ -222,7 +222,7 @@ with xr.ContextObject(
     # Create the View and Projection Matrices
     projection_matrix = OrthographicView(near_plane=0.05, far_plane=100.0).get_matrix()
     view_m = ViewMatrix()
-    view_m.look_direction(np.array([0, 0, -1]), UP)
+    view_m.look_direction(np.array([0, 0, -1], dtype="float32"), UP)
     view_matrix = view_m.get_matrix()
 
     headset_data = HeadsetData()
