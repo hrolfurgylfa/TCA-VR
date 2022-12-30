@@ -61,10 +61,13 @@ public class Plugin : BaseUnityPlugin
 
     private void SetRigData(Data data)
     {
+        // Calculate the current headset position with the offset
+        var headsetPos = HeadsetPosData.FromEyes(data.leftEye, data.rightEye);
+        var headsetPosWithOffset = headsetPos.sub(this.headsetOffset);
+
         foreach (var rig in rigs)
         {
             // Set the headset position and rotation with the current offset
-            var headsetPosWithOffset = data.headsetPos.sub(headsetOffset);
             rig.leftEye.transform.localPosition = headsetPosWithOffset.leftEyePos;
             rig.rightEye.transform.localPosition = headsetPosWithOffset.rightEyePos;
             rig.leftEye.transform.localRotation = headsetPosWithOffset.leftEyeQuaternion;
@@ -83,8 +86,8 @@ public class Plugin : BaseUnityPlugin
                 near_z = 1f;
                 far_z = 75000f;
             }
-            rig.leftEyeCam.projectionMatrix = ProjectionMatrixExtras.CreateProjectionFov(data.leftFov, near_z, far_z);
-            rig.rightEyeCam.projectionMatrix = ProjectionMatrixExtras.CreateProjectionFov(data.rightFov, near_z, far_z);
+            rig.leftEyeCam.projectionMatrix = ProjectionMatrixExtras.CreateProjectionFov(data.leftEye.fov, near_z, far_z);
+            rig.rightEyeCam.projectionMatrix = ProjectionMatrixExtras.CreateProjectionFov(data.rightEye.fov, near_z, far_z);
         }
     }
 
@@ -94,7 +97,7 @@ public class Plugin : BaseUnityPlugin
         if (Input.GetKey(KeyCode.Comma))
         {
             var data = headsetListener.Read();
-            headsetOffset = data.headsetPos;
+            this.headsetOffset = HeadsetPosData.FromEyes(data.leftEye, data.rightEye);
             SetRigData(data);
         }
 

@@ -65,13 +65,13 @@ public struct HeadsetPosData
     public Quaternion leftEyeQuaternion;
     public Quaternion rightEyeQuaternion;
 
-    public static HeadsetPosData Deserialize(Stream stream) =>
+    public static HeadsetPosData FromEyes(EyeData leftEye, EyeData rightEye) =>
         new HeadsetPosData
         {
-            leftEyePos = Deserializer.Vector3(stream),
-            rightEyePos = Deserializer.Vector3(stream),
-            leftEyeQuaternion = Deserializer.Quaternion(stream),
-            rightEyeQuaternion = Deserializer.Quaternion(stream),
+            leftEyePos = leftEye.pos,
+            rightEyePos = rightEye.pos,
+            leftEyeQuaternion = leftEye.quaternion,
+            rightEyeQuaternion = rightEye.quaternion,
         };
 
     public HeadsetPosData sub(HeadsetPosData other) =>
@@ -84,18 +84,31 @@ public struct HeadsetPosData
         };
 };
 
+public struct EyeData
+{
+    public Vector3 pos;
+    public Quaternion quaternion;
+    public FovData fov;
+
+    public static EyeData Deserialize(Stream stream) =>
+        new EyeData
+        {
+            pos = Deserializer.Vector3(stream),
+            quaternion = Deserializer.Quaternion(stream),
+            fov = FovData.Deserialize(stream),
+        };
+};
+
 public struct Data
 {
-    public HeadsetPosData headsetPos;
-    public FovData leftFov;
-    public FovData rightFov;
+    public EyeData leftEye;
+    public EyeData rightEye;
 
     public static Data Deserialize(Stream stream) =>
         new Data
         {
-            headsetPos = HeadsetPosData.Deserialize(stream),
-            leftFov = FovData.Deserialize(stream),
-            rightFov = FovData.Deserialize(stream),
+            leftEye = EyeData.Deserialize(stream),
+            rightEye = EyeData.Deserialize(stream),
         };
 }
 

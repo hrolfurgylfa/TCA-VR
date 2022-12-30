@@ -74,35 +74,46 @@ class ViewMatrix:
 
 
 @dataclass
-class HeadsetData:
-    left_eye_pos: np.ndarray = field(
+class EyeData:
+    pos: np.ndarray = field(
         default_factory=lambda: np.array((0, 0, 0), dtype="float32")
     )
-    right_eye_pos: np.ndarray = field(
-        default_factory=lambda: np.array((0, 0, 0), dtype="float32")
-    )
-    left_eye_quaternion: np.ndarray = field(
+    quaternion: np.ndarray = field(
         default_factory=lambda: np.array((0, 0, 0, 0), dtype="float32")
     )
-    right_eye_quaternion: np.ndarray = field(
-        default_factory=lambda: np.array((0, 0, 0, 0), dtype="float32")
-    )
-    left_eye_fov: np.ndarray = field(
-        default_factory=lambda: np.array((0, 0, 0, 0), dtype="float32")
-    )
-    right_eye_fov: np.ndarray = field(
+    fov: np.ndarray = field(
         default_factory=lambda: np.array((0, 0, 0, 0), dtype="float32")
     )
 
-    def tobytes(self) -> bytes:
-        return (
-            self.left_eye_pos.tobytes()
-            + self.right_eye_pos.tobytes()
-            + self.left_eye_quaternion.tobytes()
-            + self.right_eye_quaternion.tobytes()
-            + self.left_eye_fov.tobytes()
-            + self.right_eye_fov.tobytes()
-        )
+    def to_bytes(self) -> bytes:
+        return self.pos.tobytes() + self.quaternion.tobytes() + self.fov.tobytes()
+
+    @classmethod
+    def from_openxr(cls, view) -> "EyeData":
+        self = cls()
+        self.load_openxr(view)
+        return self
+    
+    def load_openxr(self, view) -> None:
+        self.pos[0] = view.pose.position.x
+        self.pos[1] = view.pose.position.y
+        self.pos[2] = view.pose.position.z
+        self.quaternion[0] = view.pose.orientation.w
+        self.quaternion[1] = view.pose.orientation.x
+        self.quaternion[2] = view.pose.orientation.y
+        self.quaternion[3] = view.pose.orientation.z
+        self.fov[0] = view.fov.angle_up
+        self.fov[1] = view.fov.angle_down
+        self.fov[2] = view.fov.angle_right
+        self.fov[3] = view.fov.angle_left
+
+@dataclass
+class HeadsetData:
+    left_eye: EyeData = field(default_factory=lambda: EyeData())
+    right_eye: EyeData = field(default_factory=lambda: EyeData())
+
+    def to_bytes(self) -> bytes:
+        return self.left_eye.to_bytes() + self.right_eye.to_bytes()
 
 
 # ContextObject is a high level pythonic class meant to keep simple cases simple.
@@ -258,29 +269,9 @@ with xr.ContextObject(
 
                     # Gather up information for the current eye
                     if view_index == 0:
-                        headset_data.left_eye_pos[0] = view.pose.position.x
-                        headset_data.left_eye_pos[1] = view.pose.position.y
-                        headset_data.left_eye_pos[2] = view.pose.position.z
-                        headset_data.left_eye_quaternion[0] = view.pose.orientation.w
-                        headset_data.left_eye_quaternion[1] = view.pose.orientation.x
-                        headset_data.left_eye_quaternion[2] = view.pose.orientation.y
-                        headset_data.left_eye_quaternion[3] = view.pose.orientation.z
-                        headset_data.left_eye_fov[0] = view.fov.angle_up
-                        headset_data.left_eye_fov[1] = view.fov.angle_down
-                        headset_data.left_eye_fov[2] = view.fov.angle_right
-                        headset_data.left_eye_fov[3] = view.fov.angle_left
+                        headset_data.left_eye.load_openxr(view)
                     elif view_index == 1:
-                        headset_data.right_eye_pos[0] = view.pose.position.x
-                        headset_data.right_eye_pos[1] = view.pose.position.y
-                        headset_data.right_eye_pos[2] = view.pose.position.z
-                        headset_data.right_eye_quaternion[0] = view.pose.orientation.w
-                        headset_data.right_eye_quaternion[1] = view.pose.orientation.x
-                        headset_data.right_eye_quaternion[2] = view.pose.orientation.y
-                        headset_data.right_eye_quaternion[3] = view.pose.orientation.z
-                        headset_data.right_eye_fov[0] = view.fov.angle_up
-                        headset_data.right_eye_fov[1] = view.fov.angle_down
-                        headset_data.right_eye_fov[2] = view.fov.angle_right
-                        headset_data.right_eye_fov[3] = view.fov.angle_left
+                        headset_data.right_eye.load_openxr(view)
 
                 # Send the information we have gathered for all the eyes
-                sender.write(headset_data.tobytes())
+                sender.write(headset_data.to_bytes())
