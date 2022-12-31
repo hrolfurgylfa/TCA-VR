@@ -1,6 +1,8 @@
 using System;
 using UnityEngine;
 
+namespace TCA_VR.Extras;
+
 public enum XRServerStartup
 {
     None,
