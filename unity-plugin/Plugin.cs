@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -207,11 +208,19 @@ public class Plugin : BaseUnityPlugin
         }
         Logger.LogInfo($"Successfully VRified {rigs.Count} camera rigs in the scene.");
 
+        StartCoroutine(RemoveAnnoyingPlaneParts());
+    }
+
+    private IEnumerator RemoveAnnoyingPlaneParts()
+    {
+        // Wait for the plane to be spawned
+        yield return new WaitForSecondsRealtime(1f);
 
         // Hide the outside of the plane, it appears weirdly in VR
         // TODO: Make sure this doesn't disable enemies too.
         var planeModels = Resources
-            .FindObjectsOfTypeAll<GameObject>();
+            .FindObjectsOfTypeAll<GameObject>()
+            .Where(go => go.name.StartsWith("Kestrel 1 ("));
         foreach (var model in planeModels)
         {
             var a = NavigateGameObjectChildren(model.transform, new string[] { "Model", "Canopy" });
@@ -222,6 +231,7 @@ public class Plugin : BaseUnityPlugin
             a.SetActive(false);
             b.SetActive(false);
         }
+        yield break;
     }
 
     private Transform? GetChildWithName(Transform transform, string name)
