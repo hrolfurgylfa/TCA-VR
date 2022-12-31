@@ -19,7 +19,6 @@
 //
 // Author: J.M.P. van Waveren
 
-using System;
 using UnityEngine;
 
 namespace TCA_VR.Extras;

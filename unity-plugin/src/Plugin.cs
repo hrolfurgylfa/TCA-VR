@@ -3,10 +3,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using BepInEx;
-using BepInEx.Logging;
 using TCA_VR.Extras;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
