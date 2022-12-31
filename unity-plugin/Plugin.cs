@@ -8,8 +8,7 @@ using BepInEx;
 using BepInEx.Logging;
 using TCA_VR.Extras;
 using UnityEngine;
-using UnityEngine.Assertions.Must;
-using UnityEngine.Events;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 
 namespace TCA_VR;
@@ -44,6 +43,8 @@ public class Plugin : BaseUnityPlugin
 
     private void Start()
     {
+        Logger.LogInfo("Render Pipeline: " + UnityEngine.Rendering.GraphicsSettings.renderPipelineAsset.GetType().Name);
+
         // Start listening for an xr server.
         headsetListener = new HeadsetListener(Logger);
         xrServerRunner = new XRServerRunner(Logger);
@@ -106,7 +107,7 @@ public class Plugin : BaseUnityPlugin
             SetRigData(headsetListener.Read());
 
         // Enable/Disable the UI
-        if (Input.GetKeyDown(KeyCode.Period))
+        if (Input.GetKeyDown(KeyCode.Insert))
         {
             var UIObjectNames = new string[] { "GameScreenHUD", "PauseMenu", "GameAircraftHUD" };
             var uiItems = Resources
@@ -184,13 +185,25 @@ public class Plugin : BaseUnityPlugin
             }
 
             // Add the main camera of the current rig
-            rigs.Add(CreateVRRig(oldCam, false));
+            var mainRig = CreateVRRig(oldCam, false);
+            rigs.Add(mainRig);
 
             // Add the CockpitInternalCam if it exists (not on all rigs)
             var oldCockpitCam = NavigateGameObjectChildren(rig.transform,
                 new string[3] { "TrackIRChannel", "ShakeChannel", "CockpitInternalCam" });
             if (oldCockpitCam != null)
-                rigs.Add(CreateVRRig(oldCockpitCam, true));
+            {
+                var cockpitRig = CreateVRRig(oldCockpitCam, true);
+                rigs.Add(cockpitRig);
+
+                // Add the cockpit cameras over the main cameras
+                var leftEyeExtraProps = mainRig.leftEye.GetComponent<UniversalAdditionalCameraData>();
+                var rightEyeExtraProps = mainRig.rightEye.GetComponent<UniversalAdditionalCameraData>();
+                leftEyeExtraProps.cameraStack.Clear();
+                rightEyeExtraProps.cameraStack.Clear();
+                leftEyeExtraProps.cameraStack.Add(cockpitRig.leftEyeCam);
+                rightEyeExtraProps.cameraStack.Add(cockpitRig.rightEyeCam);
+            }
         }
         Logger.LogInfo($"Successfully VRified {rigs.Count} camera rigs in the scene.");
 

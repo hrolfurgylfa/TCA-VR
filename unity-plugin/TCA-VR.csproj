@@ -16,7 +16,13 @@
 
     <PackageReference Include="NetMQ" Version="4.0.1.10" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <Reference Include="UnityEngine.Rendering.Universal">
+      <HintPath>$(TCA_PATH)\Arena_Data\Managed\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
   </ItemGroup>
