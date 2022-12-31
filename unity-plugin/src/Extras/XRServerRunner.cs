@@ -12,7 +12,6 @@ public class XRServerRunner : IDisposable
     private Process? process = null;
     private EventHandler? processEventHandler = null;
     private ManualLogSource Logger;
-    private volatile bool running = true;
 
     public XRServerRunner(ManualLogSource logger)
     {
@@ -23,7 +22,6 @@ public class XRServerRunner : IDisposable
     {
         Logger.LogInfo("Disposing of the XRServerRunner.");
         if (process != null) Stop();
-        running = false;
     }
 
     public void Start(Config config)
