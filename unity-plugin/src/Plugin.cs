@@ -22,7 +22,7 @@ struct CameraRig
     public bool isCockpitCam;
 }
 
-[BepInPlugin("io.github.hrolfurgylfa", "TCA VR", "0.0.1")]
+[BepInPlugin("io.github.hrolfurgylfa.tca-vr", "TCA VR", "0.0.1")]
 [BepInProcess("Arena.exe")]
 public class Plugin : BaseUnityPlugin
 {
