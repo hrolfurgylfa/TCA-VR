@@ -73,6 +73,8 @@ public class Plugin : BaseUnityPlugin
             rig.leftEye.transform.localRotation = headsetPosWithOffset.leftEyeQuaternion;
             rig.rightEye.transform.localRotation = headsetPosWithOffset.rightEyeQuaternion;
 
+            Logger.LogInfo("Distance between eyes: " + Vector3.Distance(rig.leftEye.transform.localPosition, rig.rightEye.transform.localPosition));
+
             // Set the projection matrix
             float near_z;
             float far_z;
@@ -98,6 +100,7 @@ public class Plugin : BaseUnityPlugin
         {
             var data = headsetListener.Read();
             this.headsetOffset = HeadsetPosData.FromEyes(data.leftEye, data.rightEye);
+            this.headsetOffset.CenterEyes();
             SetRigData(data);
         }
 

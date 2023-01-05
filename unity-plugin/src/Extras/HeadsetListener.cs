@@ -58,10 +58,12 @@ public struct FovData
 
 public struct HeadsetPosData
 {
-    public Vector3 leftEyePos;
-    public Vector3 rightEyePos;
-    public Quaternion leftEyeQuaternion;
-    public Quaternion rightEyeQuaternion;
+    public Vector3 leftEyePos = Vector3.zero;
+    public Vector3 rightEyePos = Vector3.zero;
+    public Quaternion leftEyeQuaternion = Quaternion.identity;
+    public Quaternion rightEyeQuaternion = Quaternion.identity;
+
+    public HeadsetPosData() { }
 
     public static HeadsetPosData FromEyes(EyeData leftEye, EyeData rightEye) =>
         new HeadsetPosData
@@ -71,6 +73,13 @@ public struct HeadsetPosData
             leftEyeQuaternion = leftEye.quaternion,
             rightEyeQuaternion = rightEye.quaternion,
         };
+
+    public void CenterEyes()
+    {
+        leftEyePos = rightEyePos = (leftEyePos + rightEyePos) / 2;
+        leftEyeQuaternion = rightEyeQuaternion =
+            Quaternion.Lerp(leftEyeQuaternion, rightEyeQuaternion, 0.5f);
+    }
 
     public HeadsetPosData sub(HeadsetPosData other) =>
         new HeadsetPosData
