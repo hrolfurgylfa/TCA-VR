@@ -4,5 +4,6 @@ PyOpenGL ~= 3.1.6
 
 pywin32 == 305
 mss ~= 7.0.1
+screeninfo ~= 0.8.1
 
 pyinstaller ~= 5.7.0

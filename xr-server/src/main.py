@@ -8,6 +8,7 @@ from OpenGL import GL
 from OpenGL.GL.shaders import compileShader, compileProgram
 import xr
 import mss
+from screeninfo import get_monitors
 
 from data_sender import DataSender
 from timer import Timer
@@ -199,7 +200,8 @@ with xr.ContextObject(
     GL.glClearDepth(1.0)
 
     # Initialize the texture with no data
-    monitor = {"top": 0, "left": 0, "width": 1920, "height": 1080}
+    main_monitor = [m for m in get_monitors() if m.is_primary][0]
+    monitor = {"top": 0, "left": 0, "width": main_monitor.width, "height": main_monitor.height}
     tex_id = GL.glGenTextures(1)
     GL.glBindTexture(GL.GL_TEXTURE_2D, tex_id)
     GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
