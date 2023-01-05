@@ -131,21 +131,9 @@ public class Plugin : BaseUnityPlugin
         Camera leftEyeCam = leftEye.GetComponent<Camera>();
         Camera rightEyeCam = rightEye.GetComponent<Camera>();
 
-        Logger.LogInfo("Before:");
-        Logger.LogInfo("Left eye FOV: " + leftEyeCam.fieldOfView.ToString());
-        Logger.LogInfo("Right eye FOV: " + rightEyeCam.fieldOfView.ToString());
-        // TODO: Get fov from headset and find a way to modify leftEyeCam without TCA reverting it
-        rightEyeCam.fieldOfView = leftEyeCam.fieldOfView;
-        Logger.LogInfo("After:");
-        Logger.LogInfo("Left eye FOV: " + leftEyeCam.fieldOfView.ToString());
-        Logger.LogInfo("Right eye FOV: " + rightEyeCam.fieldOfView.ToString());
-
         leftEyeCam.useOcclusionCulling = false;
         rightEyeCam.useOcclusionCulling = false;
 
-        float num = 63f / (1000f * 2);
-        leftEye.transform.Translate(Vector3.left * num);
-        rightEye.transform.Translate(Vector3.right * num);
         leftEyeCam.rect = new Rect(0.0f, 0.0f, 0.5f, 1.0f);
         rightEyeCam.rect = new Rect(0.5f, 0.0f, 0.5f, 1.0f);
 
