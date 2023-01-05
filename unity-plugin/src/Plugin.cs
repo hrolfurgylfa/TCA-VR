@@ -146,10 +146,8 @@ public class Plugin : BaseUnityPlugin
         float num = 63f / (1000f * 2);
         leftEye.transform.Translate(Vector3.left * num);
         rightEye.transform.Translate(Vector3.right * num);
-        float w = Screen.currentResolution.width;
-        float h = Screen.currentResolution.height;
-        leftEyeCam.pixelRect = new Rect(0.0f, 0.0f, w / 2, h);
-        rightEyeCam.pixelRect = new Rect(w / 2, 0.0f, w / 2, h);
+        leftEyeCam.rect = new Rect(0.0f, 0.0f, 0.5f, 1.0f);
+        rightEyeCam.rect = new Rect(0.5f, 0.0f, 0.5f, 1.0f);
 
         return new CameraRig
         {
